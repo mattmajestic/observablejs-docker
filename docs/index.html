@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Primary mortgage market survey | Observable Framework</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&amp;display=swap" crossorigin>
+<link rel="preload" as="style" href="./_observablehq/theme-air,near-midnight.css">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&amp;display=swap" crossorigin>
+<link rel="stylesheet" type="text/css" href="./_observablehq/theme-air,near-midnight.css">
+<link rel="modulepreload" href="./_observablehq/client.js">
+<link rel="modulepreload" href="./_observablehq/runtime.js">
+<link rel="modulepreload" href="./_observablehq/stdlib.js">
+<link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/_esm.js">
+<link rel="modulepreload" href="./_npm/d3@7.9.0/_esm.js">
+<link rel="modulepreload" href="./_npm/htl@0.3.1/_esm.js">
+<link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.14/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-array@3.2.4/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-axis@3.0.0/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-brush@3.0.0/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-chord@3.0.1/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-color@3.1.0/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-contour@4.0.2/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-delaunay@6.0.4/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-dispatch@3.0.1/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-drag@3.0.0/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-ease@3.0.1/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-fetch@3.0.1/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-force@3.0.0/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-format@3.1.0/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-geo@3.1.1/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-hierarchy@3.1.2/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-interpolate@3.0.1/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-path@3.1.0/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-polygon@3.0.1/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-quadtree@3.0.1/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-random@3.0.1/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-scale@4.0.2/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-scale-chromatic@3.1.0/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-selection@3.0.0/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-shape@3.2.0/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-time@3.1.0/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-time-format@4.1.0/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-timer@3.0.1/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-transition@3.0.1/_esm.js">
+<link rel="modulepreload" href="./_npm/d3-zoom@3.0.0/_esm.js">
+<link rel="modulepreload" href="./_npm/isoformat@0.2.1/_esm.js">
+<link rel="modulepreload" href="./_npm/interval-tree-1d@1.0.4/_esm.js">
+<link rel="modulepreload" href="./_npm/internmap@2.0.3/_esm.js">
+<link rel="modulepreload" href="./_npm/delaunator@5.0.1/_esm.js">
+<link rel="modulepreload" href="./_npm/binary-search-bounds@2.0.5/_esm.js">
+<link rel="modulepreload" href="./_npm/robust-predicates@3.0.2/_esm.js">
+<script type="module">
+
+import {define} from "./_observablehq/client.js";
+import {registerFile} from "./_observablehq/stdlib.js";
+
+registerFile("./data/pmms.csv", {"name":"./data/pmms.csv","mimeType":"text/csv","path":"./_file/data/pmms.e31e62c7.csv","lastModified":1717025492049});
+
+define({id: "cb7d4f79", inputs: ["FileAttachment"], outputs: ["pmms","tidy"], body: (FileAttachment) => {
+const pmms = FileAttachment("./data/pmms.csv").csv({typed: true});
+const tidy = pmms.then((pmms) => pmms.flatMap(({date, pmms30, pmms15}) => [{date, rate: pmms30, type: "30Y FRM"}, {date, rate: pmms15, type: "15Y FRM"}]));
+return {pmms,tidy};
+}});
+
+define({id: "d86eb173", inputs: ["Plot","html"], outputs: ["color","colorLegend"], body: (Plot,html) => {
+const color = Plot.scale({color: {domain: ["30Y FRM", "15Y FRM"]}});
+const colorLegend = (y) => html`<span style="border-bottom: solid 2px ${color.apply(`${y}Y FRM`)};">${y}-year fixed-rate</span>`;
+return {color,colorLegend};
+}});
+
+define({id: "58302962", inputs: ["pmms","Mutable"], outputs: ["defaultStartEnd","startEnd","setStartEnd","getStartEnd"], body: (pmms,Mutable) => {
+const defaultStartEnd = [pmms.at(-53).date, pmms.at(-1).date];
+const startEnd = Mutable(defaultStartEnd);
+const setStartEnd = (se) => startEnd.value = (se ?? defaultStartEnd);
+const getStartEnd = () => startEnd.value;
+return {defaultStartEnd,startEnd,setStartEnd,getStartEnd};
+}});
+
+define({id: "dcfa191d", inputs: ["d3","color","html","resize","Plot"], outputs: ["frmCard","formatPercent","trend"], body: (d3,color,html,resize,Plot) => {
+function frmCard(y, pmms) {
+  const key = `pmms${y}`;
+  const diff1 = pmms.at(-1)[key] - pmms.at(-2)[key];
+  const diffY = pmms.at(-1)[key] - pmms.at(-53)[key];
+  const range = d3.extent(pmms.slice(-52), (d) => d[key]);
+  const stroke = color.apply(`${y}Y FRM`);
+  return html.fragment`
+    <h2 style="color: ${stroke}">${y}-year fixed-rate</b></h2>
+    <h1>${formatPercent(pmms.at(-1)[key])}</h1>
+    <table>
+      <tr>
+        <td>1-week change</td>
+        <td align="right">${formatPercent(diff1, {signDisplay: "always"})}</td>
+        <td>${trend(diff1)}</td>
+      </tr>
+      <tr>
+        <td>1-year change</td>
+        <td align="right">${formatPercent(diffY, {signDisplay: "always"})}</td>
+        <td>${trend(diffY)}</td>
+      </tr>
+      <tr>
+        <td>4-week average</td>
+        <td align="right">${formatPercent(d3.mean(pmms.slice(-4), (d) => d[key]))}</td>
+      </tr>
+      <tr>
+        <td>52-week average</td>
+        <td align="right">${formatPercent(d3.mean(pmms.slice(-52), (d) => d[key]))}</td>
+      </tr>
+    </table>
+    ${resize((width) =>
+      Plot.plot({
+        width,
+        height: 40,
+        axis: null,
+        x: {inset: 40},
+        marks: [
+          Plot.tickX(pmms.slice(-52), {
+            x: key,
+            stroke,
+            insetTop: 10,
+            insetBottom: 10,
+            title: (d) => `${d.date?.toLocaleDateString("en-us")}: ${d[key]}%`,
+            tip: {anchor: "bottom"}
+          }),
+          Plot.tickX(pmms.slice(-1), {x: key, strokeWidth: 2}),
+          Plot.text([`${range[0]}%`], {frameAnchor: "left"}),
+          Plot.text([`${range[1]}%`], {frameAnchor: "right"})
+        ]
+      })
+    )}
+    <span class="small muted">52-week range</span>
+  `;
+}
+
+function formatPercent(value, format) {
+  return value == null
+    ? "N/A"
+    : (value / 100).toLocaleString("en-US", {minimumFractionDigits: 2, style: "percent", ...format});
+}
+
+function trend(v) {
+  return v >= 0.005 ? html`<span class="green">↗︎</span>`
+    : v <= -0.005 ? html`<span class="red">↘︎</span>`
+    : "→";
+}
+return {frmCard,formatPercent,trend};
+}});
+
+define({id: "44f30855", inline: true, inputs: ["colorLegend","display"], body: async (colorLegend,display) => {
+display(await(
+colorLegend(30)
+))
+}});
+
+define({id: "3e29f365", inline: true, inputs: ["colorLegend","display"], body: async (colorLegend,display) => {
+display(await(
+colorLegend(15)
+))
+}});
+
+define({id: "a3ce89b7", inline: true, inputs: ["pmms","display"], body: async (pmms,display) => {
+display(await(
+pmms.at(-1).date?.toLocaleDateString("en-US", {year: "numeric", month: "long", day: "numeric"})
+))
+}});
+
+define({id: "96c0951e", inline: true, inputs: ["frmCard","pmms","display"], body: async (frmCard,pmms,display) => {
+display(await(
+frmCard(30, pmms)
+))
+}});
+
+define({id: "9b772706", inline: true, inputs: ["frmCard","pmms","display"], body: async (frmCard,pmms,display) => {
+display(await(
+frmCard(15, pmms)
+))
+}});
+
+define({id: "dd72197d", inline: true, inputs: ["startEnd","defaultStartEnd","display"], body: async (startEnd,defaultStartEnd,display) => {
+display(await(
+startEnd === defaultStartEnd ? "over the past year" : startEnd.map((d) => d.toLocaleDateString("en-US")).join("–")
+))
+}});
+
+define({id: "b12f8347", inline: true, inputs: ["resize","Plot","color","tidy","startEnd","display"], body: async (resize,Plot,color,tidy,startEnd,display) => {
+display(await(
+resize((width, height) =>
+      Plot.plot({
+        width,
+        height,
+        y: {grid: true, label: "rate (%)"},
+        color,
+        marks: [
+          Plot.lineY(tidy.filter((d) => startEnd[0] <= d.date && d.date < startEnd[1]), {x: "date", y: "rate", stroke: "type", curve: "step", tip: true, markerEnd: true})
+        ]
+      })
+    )
+))
+}});
+
+define({id: "aed6a3a4", inline: true, inputs: ["d3","pmms","display"], body: async (d3,pmms,display) => {
+display(await(
+d3.extent(pmms, (d) => d.date.getUTCFullYear()).join("–")
+))
+}});
+
+define({id: "cd3ebc7b", inline: true, inputs: ["resize","Plot","color","tidy","d3","setStartEnd","PointerEvent","getStartEnd","display"], body: async (resize,Plot,color,tidy,d3,setStartEnd,PointerEvent,getStartEnd,display) => {
+display(await(
+resize((width) =>
+      Plot.plot({
+        width,
+        y: {grid: true, label: "rate (%)"},
+        color,
+        marks: [
+          Plot.ruleY([0]),
+          Plot.lineY(tidy, {x: "date", y: "rate", stroke: "type", tip: true}),
+          (index, scales, channels, dimensions, context) => {
+            const x1 = dimensions.marginLeft;
+            const y1 = 0;
+            const x2 = dimensions.width - dimensions.marginRight;
+            const y2 = dimensions.height;
+            const brushed = (event) => {
+              if (!event.sourceEvent) return;
+              let {selection} = event;
+              if (!selection) {
+                const r = 10; // radius of point-based selection
+                let [px] = d3.pointer(event, context.ownerSVGElement);
+                px = Math.max(x1 + r, Math.min(x2 - r, px));
+                selection = [px - r, px + r];
+                g.call(brush.move, selection);
+              }
+              setStartEnd(selection.map(scales.x.invert));
+            };
+            const pointerdowned = (event) => {
+              const pointerleave = new PointerEvent("pointerleave", {bubbles: true, pointerType: "mouse"});
+              event.target.dispatchEvent(pointerleave);
+            };
+            const brush = d3.brushX().extent([[x1, y1], [x2, y2]]).on("brush end", brushed);
+            const g = d3.create("svg:g").call(brush);
+            g.call(brush.move, getStartEnd().map(scales.x));
+            g.on("pointerdown", pointerdowned);
+            return g.node();
+          }
+        ]
+      })
+    )
+))
+}});
+
+</script>
+<div id="observablehq-center">
+<header id="observablehq-header">
+<style>
+
+#observablehq-header a[href] {
+  color: inherit;
+}
+
+#observablehq-header a[target="_blank"] {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  text-decoration: none;
+}
+
+#observablehq-header a[target="_blank"]:hover span {
+  text-decoration: underline;
+}
+
+#observablehq-header a[target="_blank"]::after {
+  content: "\2197";
+}
+
+#observablehq-header a[target="_blank"]:not(:hover, :focus)::after {
+  color: var(--theme-foreground-muted);
+}
+
+@container not (min-width: 640px) {
+  .hide-if-small {
+    display: none;
+  }
+}
+
+</style>
+<div style="display: flex; align-items: center; gap: 0.5rem; height: 2.2rem; margin: -1.5rem -2rem 2rem -2rem; padding: 0.5rem 2rem; border-bottom: solid 1px var(--theme-foreground-faintest); font: 500 16px var(--sans-serif);">
+  <a href="https://observablehq.com/" target="_self" rel="" style="display: flex; align-items: center;">
+    <svg width="22" height="22" viewBox="0 0 21.92930030822754 22.68549919128418" fill="currentColor">
+      <path d="M10.9646 18.9046C9.95224 18.9046 9.07507 18.6853 8.33313 18.2467C7.59386 17.8098 7.0028 17.1909 6.62722 16.4604C6.22789 15.7003 5.93558 14.8965 5.75735 14.0684C5.56825 13.1704 5.47613 12.2574 5.48232 11.3427C5.48232 10.6185 5.52984 9.92616 5.62578 9.26408C5.7208 8.60284 5.89715 7.93067 6.15391 7.24843C6.41066 6.56618 6.74143 5.97468 7.14438 5.47308C7.56389 4.9592 8.1063 4.54092 8.72969 4.25059C9.38391 3.93719 10.1277 3.78091 10.9646 3.78091C11.977 3.78091 12.8542 4.00021 13.5962 4.43879C14.3354 4.87564 14.9265 5.49454 15.3021 6.22506C15.6986 6.97704 15.9883 7.7744 16.1719 8.61712C16.3547 9.459 16.447 10.3681 16.447 11.3427C16.447 12.067 16.3995 12.7593 16.3035 13.4214C16.2013 14.1088 16.0206 14.7844 15.7644 15.437C15.4994 16.1193 15.1705 16.7108 14.7739 17.2124C14.3774 17.714 13.8529 18.1215 13.1996 18.4349C12.5463 18.7483 11.8016 18.9046 10.9646 18.9046ZM12.8999 13.3447C13.4242 12.8211 13.7159 12.0966 13.7058 11.3427C13.7058 10.5639 13.4436 9.89654 12.92 9.34074C12.3955 8.78495 11.7441 8.50705 10.9646 8.50705C10.1852 8.50705 9.53376 8.78495 9.00928 9.34074C8.49569 9.87018 8.21207 10.5928 8.22348 11.3427C8.22348 12.1216 8.48572 12.7889 9.00928 13.3447C9.53376 13.9005 10.1852 14.1784 10.9646 14.1784C11.7441 14.1784 12.3891 13.9005 12.8999 13.3447ZM10.9646 22.6855C17.0199 22.6855 21.9293 17.6068 21.9293 11.3427C21.9293 5.07871 17.0199 0 10.9646 0C4.90942 0 0 5.07871 0 11.3427C0 17.6068 4.90942 22.6855 10.9646 22.6855Z"></path>
+    </svg>
+  </a>
+  <div style="display: flex; flex-grow: 1; justify-content: space-between; align-items: baseline;">
+    <a href="https://observablehq.com/framework/" target="_self" rel="">
+      <span class="hide-if-small">ObservableJS</span> wih Docker
+    </a>
+    <span style="display: flex; align-items: baseline; gap: 0.5rem; font-size: 14px;">
+      <a target="_blank" href="https://github.com/mattmajestic/observeablejs-docker" rel="noopener noreferrer"><span>View source</span></a>
+    </span>
+  </div>
+</div>
+</header>
+<main id="observablehq-main" class="observablehq">
+<h1 id="primary-mortgage-market-survey" tabindex="-1"><a class="observablehq-header-anchor" href="#primary-mortgage-market-survey">Primary mortgage market survey</a></h1>
+<div id="cell-cb7d4f79" class="observablehq observablehq--block"></div>
+<div id="cell-d86eb173" class="observablehq observablehq--block"></div>
+<div id="cell-58302962" class="observablehq observablehq--block"></div>
+<div id="cell-dcfa191d" class="observablehq observablehq--block"></div>
+<p>Each week, <a href="https://www.freddiemac.com/pmms/about-pmms.html" target="_blank" rel="noopener noreferrer">Freddie Mac</a> surveys lenders on rates and points for their <span id="cell-44f30855"><span class="observablehq-loading"></span></span>, <span id="cell-3e29f365"><span class="observablehq-loading"></span></span>, and other mortgage products. Data as of <span id="cell-a3ce89b7"><span class="observablehq-loading"></span></span>.</p>
+<style type="text/css">
+
+@container (min-width: 560px) {
+  .grid-cols-2-3 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .grid-cols-2-3 .grid-colspan-2 {
+    grid-column: span 2;
+  }
+}
+
+@container (min-width: 840px) {
+  .grid-cols-2-3 {
+    grid-template-columns: 1fr 2fr;
+    grid-auto-flow: column;
+  }
+}
+
+</style>
+<div class="grid grid-cols-2-3" style="margin-top: 2rem;">
+  <div class="card"><span id="cell-96c0951e"><span class="observablehq-loading"></span></span></div>
+  <div class="card"><span id="cell-9b772706"><span class="observablehq-loading"></span></span></div>
+  <div class="card grid-colspan-2 grid-rowspan-2" style="display: flex; flex-direction: column;">
+    <h2>Rates <span id="cell-dd72197d"><span class="observablehq-loading"></span></span></h2><br>
+    <span style="flex-grow: 1;"><span id="cell-b12f8347"><span class="observablehq-loading"></span></span></span>
+  </div>
+</div>
+<div class="grid">
+  <div class="card">
+    <h2>Rates over all time (<span id="cell-aed6a3a4"><span class="observablehq-loading"></span></span>)</h2>
+    <h3>Click or drag to zoom</h3><br>
+    <span id="cell-cd3ebc7b"><span class="observablehq-loading"></span></span>
+  </div>
+</div></main>
+<footer id="observablehq-footer">
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2024-05-29T20:08:04">May 29, 2024</a>.</div>
+</footer>
+</div>
