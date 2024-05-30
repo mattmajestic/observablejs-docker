@@ -1,4 +1,4 @@
-# ObservableJS Docker Deployment 🌟
+# ObservableJS with Docker 🌟
 
 Check out this Mortgage Rates Dashboard from Freddie Mae Data
 
